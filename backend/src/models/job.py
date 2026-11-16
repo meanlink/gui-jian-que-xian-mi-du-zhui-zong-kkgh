@@ -8,6 +8,8 @@ class Job(Base):
     dataset_id: Mapped[int] = mapped_column(ForeignKey('datasets.id'))
     params: Mapped[dict] = mapped_column(JSON, default=dict)
     status: Mapped[str] = mapped_column(String(20), default='queued')
+    # 冷存批次取回期间的阻断原因；取回并校验通过后自动恢复计算。
+    wait_reason: Mapped[str] = mapped_column(String(400), default='')
     result: Mapped[dict] = mapped_column(JSON, default=dict)
     error: Mapped[str] = mapped_column(String(1000), default='')
     approved: Mapped[bool] = mapped_column(Boolean, default=False)

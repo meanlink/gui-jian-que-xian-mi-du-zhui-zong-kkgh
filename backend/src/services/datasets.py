@@ -18,6 +18,6 @@ def create(db, data):
                     if isinstance(value,bool) or not math.isfinite(float(value)): raise ValueError()
                     row[c['key']]=float(value)
                 except (TypeError, ValueError, OverflowError): raise HTTPException(422, f'第 {index+1} 行 {c["label"]} 必须为有限数值')
-    d=Dataset(name=name, source=data.source, records=data.records, checksum=checksum(data.records), created_at=time.time())
+    d=Dataset(name=name, source=data.source, records=data.records, checksum=checksum(data.records), row_count=len(data.records), storage_state='online', created_at=time.time())
     db.add(d); db.flush()
     return d

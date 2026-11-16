@@ -14,7 +14,9 @@ def listing(db=Depends(get_db),u=Depends(current_user)):
 @router.post('',status_code=201)
 def create(data:JobInput,db=Depends(get_db),u=Depends(can_write)):
     j=jobs.create(db,data,u); record(db,u.email,'job.create',{'id':j.id,'params':j.params})
-    db.commit(); jobs.enqueue(j.id); return job_dict(j)
+    db.commit()
+    if j.status=='queued': jobs.enqueue(j.id)  # 等待冷存取回的任务由 worker 校验后自行入队
+    return job_dict(j)
 @router.get('/{id}')
 def detail(id:int,db=Depends(get_db),u=Depends(current_user)):
     j=db.get(Job,id)
